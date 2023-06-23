@@ -1,0 +1,497 @@
+@import "../../node_modules/bootstrap/scss/mixins/banner";
+@include bsBanner("");
+
+// Configuration
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/variables-dark"; // added in bootstrap 5.3
+
+// theme-colors
+$custom-theme-colors: (
+  "white": $white,
+  "blue": $blue-600,
+  "blue-light": $blue-100,
+  "blue-dark": $blue-700,
+  "blue-400": $blue-400,
+  "blue-300": $blue-300,
+  "blue-200": $blue-200,
+  "green": $green-500,
+  "green-light": $green-100,
+  "green-dark": $green-600,
+  "red": $red-600,
+  "red-light": $red-100,
+  "red-dark": $red-700,
+  "purple-300": $purple-300,
+);
+$theme-colors: map-merge($theme-colors, $custom-theme-colors);
+// $theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value");
+
+// font-sizes
+$h1-font-size: $font-size-base * 1.6 !default;
+$h2-font-size: $font-size-base * 1.5 !default;
+$h3-font-size: $font-size-base * 1.3 !default;
+$h4-font-size: $font-size-base * 1.2 !default;
+$h5-font-size: $font-size-base * 1.1 !default;
+$h6-font-size: $font-size-base !default;
+$sm-font-size: $font-size-base * 0.875 !default;
+$xs-font-size: $font-size-base * 0.75 !default;
+$xxs-font-size: $font-size-base * 0.625 !default;
+$xxxs-font-size: $font-size-base * 0.5 !default;
+
+$custom-font-sizes: (
+  1: $h1-font-size,
+  2: $h2-font-size,
+  3: $h3-font-size,
+  4: $h4-font-size,
+  5: $h5-font-size,
+  6: $h6-font-size,
+  "sm": $sm-font-size,
+  "xs": $xs-font-size,
+  "2xs": $xxs-font-size,
+  "3xs": $xxxs-font-size,
+);
+$font-sizes: map-merge($font-sizes, $custom-font-sizes);
+
+// For getter (bs5 grid), gap (grid), margin, padding
+$custom-spacers: (
+  "px": 1px,
+  "0-75rem": $spacer * 0.75,
+  "1-25rem": $spacer * 1.25,
+);
+$spacers: map-merge($spacers, $custom-spacers);
+
+// scss-docs-start position-map
+$custom-position-values: (
+  0: 0,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 0.75rem,
+  4: 1rem,
+  5: 1.25rem,
+  6: 1.5rem,
+  7: 1.75rem,
+  8: 2rem,
+  10: 2.5rem,
+  12: 3rem,
+  14: 3.5rem,
+  16: 4rem,
+  20: 5rem,
+  24: 6rem,
+  n1: -0.25rem,
+  n2: -0.5rem,
+  n3: -0.75rem,
+  n4: -1rem,
+  n5: -1.25rem,
+  n6: -1.5rem,
+  n7: -1.75rem,
+  n8: -2rem,
+  n10: -2.5rem,
+  n12: -3rem,
+  n14: -3.5rem,
+  n16: -4rem,
+  n20: -5rem,
+  n24: -6rem,
+  50percent: 50%,
+  100percent: 100%,
+) !default;
+$position-values: map-merge($custom-position-values, $position-values);
+// scss-docs-end position-map
+// z-index
+$zindex-levels: (
+  auto: auto,
+  0: 0,
+  1: 1,
+  2: 2,
+  3: 3,
+);
+
+@import "../../node_modules/bootstrap/scss/maps";
+@import "../../node_modules/bootstrap/scss/mixins";
+@import "../../node_modules/bootstrap/scss/utilities";
+
+// utilities mutations
+$utilities: map-merge(
+  $utilities,
+  (
+    "cursor": (
+      property: cursor,
+      class: cursor,
+      values: auto pointer grab,
+    ),
+    "object-fit": (
+      property: object-fit,
+      values: (
+        contain: contain,
+        cover: cover,
+        fill: fill,
+        scale: scale-down,
+        none: none,
+      ),
+    ),
+    // size utilities
+    "width":
+      (
+        property: width,
+        class: w,
+        values: (
+          1: 0.25rem,
+          2: 0.5rem,
+          3: 0.75rem,
+          4: 1rem,
+          5: 1.25rem,
+          6: 1.5rem,
+          7: 1.75rem,
+          8: 2rem,
+          10: 2.5rem,
+          12: 3rem,
+          14: 3.5rem,
+          16: 4rem,
+          20: 5rem,
+          24: 6rem,
+          28: 7rem,
+          32: 8rem,
+          36: 9rem,
+          40: 10rem,
+          48: 12rem,
+          56: 14rem,
+          64: 16rem,
+          72: 18rem,
+          80: 20rem,
+          96: 24rem,
+          112: 28rem,
+          128: 32rem,
+          160: 40rem,
+          192: 48rem,
+          224: 56rem,
+          256: 64rem,
+          auto: auto,
+          min: min-content,
+          max: max-content,
+          fit: fit-content,
+          screen: 100vw,
+        ),
+      ),
+    "width-percent": (
+      property: width,
+      class: w-percent,
+      values: (
+        10: 10%,
+        25: 25%,
+        40: 40%,
+        50: 50%,
+        60: 60%,
+        75: 75%,
+        90: 90%,
+        100: 100%,
+      ),
+    ),
+    "max-width": (
+      property: max-width,
+      responsive: true,
+      class: mw,
+      values: (
+        0: 0rem,
+        4: 1rem,
+        8: 2rem,
+        12: 3rem,
+        16: 4rem,
+        24: 6rem,
+        32: 8rem,
+        40: 10rem,
+        xs: 20rem,
+        sm: 24rem,
+        md: 28rem,
+        lg: 32rem,
+        xl: 36rem,
+        2xl: 42rem,
+        3xl: 48rem,
+        4xl: 56rem,
+        5xl: 64rem,
+        6xl: 72rem,
+        7xl: 80rem,
+        50: 50%,
+        100: 100%,
+        none: none,
+      ),
+    ),
+    "height": (
+      property: height,
+      class: h,
+      values: (
+        0: 0,
+        1: 0.25rem,
+        2: 0.5rem,
+        3: 0.75rem,
+        4: 1rem,
+        5: 1.25rem,
+        6: 1.5rem,
+        7: 1.75rem,
+        8: 2rem,
+        10: 2.5rem,
+        12: 3rem,
+        14: 3.5rem,
+        16: 4rem,
+        20: 5rem,
+        24: 6rem,
+        28: 7rem,
+        32: 8rem,
+        40: 10rem,
+        48: 12rem,
+        56: 14rem,
+        64: 16rem,
+        80: 20rem,
+        96: 24rem,
+        112: 28rem,
+        128: 32rem,
+        160: 40rem,
+        192: 48rem,
+        224: 56rem,
+        256: 64rem,
+        auto: auto,
+      ),
+    ),
+    "height-percent": (
+      property: height,
+      class: h-percent,
+      values: (
+        10: 10%,
+        25: 25%,
+        40: 40%,
+        50: 50%,
+        60: 60%,
+        75: 75%,
+        90: 90%,
+        100: 100%,
+      ),
+    ),
+    "max-height": (
+      property: max-height,
+      class: mh,
+      values: (
+        0: 0rem,
+        4: 1rem,
+        8: 2rem,
+        12: 3rem,
+        16: 4rem,
+        24: 6rem,
+        32: 8rem,
+        40: 10rem,
+        xs: 20rem,
+        sm: 24rem,
+        md: 28rem,
+        lg: 32rem,
+        xl: 36rem,
+        2xl: 42rem,
+        3xl: 48rem,
+        4xl: 56rem,
+        5xl: 64rem,
+        6xl: 72rem,
+        7xl: 80rem,
+        50: 50%,
+        100: 100%,
+        none: none,
+      ),
+    ),
+    "min-viewport-height": (
+      property: min-height,
+      class: min-vh,
+      values: (
+        25: 25vh,
+        50: 50vh,
+        75: 75vh,
+        100: 100vh,
+        full: 100%,
+        min: min-content,
+        max: max-content,
+        fit: fit-content,
+      ),
+    ),
+    // color and transparency utilities
+    "color":
+      (
+        property: color,
+        class: text,
+        state: hover,
+        local-vars: (
+          "text-opacity": 1,
+        ),
+        values:
+          map-merge(
+            $utilities-text-colors,
+            (
+              "muted": $text-muted,
+              "black-50": rgba($black, 0.5),
+              // deprecated
+              "white-50": rgba($white, 0.5),
+              // deprecated
+              "reset": inherit,
+            )
+          ),
+      ),
+    "text-opacity": (
+      css-var: true,
+      class: text-opacity,
+      values: (
+        0: 0,
+        10: 0.1,
+        25: 0.25,
+        40: 0.4,
+        50: 0.5,
+        60: 0.6,
+        75: 0.75,
+        90: 0.9,
+        100: 1,
+      ),
+    ),
+    "opacity": (
+      property: opacity,
+      class: opacity,
+      state: hover,
+      values: (
+        0: 0,
+        10: 0.1,
+        25: 0.25,
+        40: 0.4,
+        50: 0.5,
+        60: 0.6,
+        75: 0.75,
+        90: 0.9,
+        100: 1,
+      ),
+    ),
+    "background-color": (
+      property: background-color,
+      class: bg,
+      state: hover,
+      local-vars: (
+        "bg-opacity": 1,
+      ),
+      values:
+        map-merge(
+          $utilities-bg-colors,
+          (
+            "transparent": transparent,
+          )
+        ),
+    ),
+    "bg-opacity": (
+      css-var: true,
+      class: bg-opacity,
+      state: hover,
+      values: (
+        0: 0,
+        10: 0.1,
+        25: 0.25,
+        40: 0.4,
+        50: 0.5,
+        60: 0.6,
+        75: 0.75,
+        90: 0.9,
+        100: 1,
+      ),
+    ),
+    "border-color": (
+      property: border-color,
+      class: border,
+      state: hover,
+      local-vars: (
+        "border-opacity": 1,
+      ),
+      values:
+        map-merge(
+          $utilities-border-colors,
+          (
+            "transparent": transparent,
+          )
+        ),
+    ),
+    "border-opacity": (
+      css-var: true,
+      state: hover,
+      class: border-opacity,
+      values: (
+        0: 0,
+        10: 0.1,
+        25: 0.25,
+        40: 0.4,
+        50: 0.5,
+        60: 0.6,
+        75: 0.75,
+        90: 0.9,
+        100: 1,
+      ),
+    ),
+    // SVG utilities
+    "fill":
+      (
+        property: fill,
+        class: fill,
+        state: hover,
+        local-vars: (
+          "text-opacity": 1,
+        ),
+        values:
+          map-merge(
+            $utilities-text-colors,
+            (
+              "none": none,
+              "inherit": inherit,
+              "current": currentColor,
+              "transparent": transparent,
+              // additional colors
+              "muted": $text-muted,
+              "black-50": rgba($black, 0.5),
+              // deprecated
+              "white-50": rgba($white, 0.5),
+            )
+          ),
+      ),
+    // z-index
+    "z-index":
+      (
+        property: z-index,
+        class: z,
+        values: $zindex-levels,
+      ),
+  )
+);
+
+// Layout & components
+@import "../../node_modules/bootstrap/scss/root";
+@import "../../node_modules/bootstrap/scss/reboot";
+@import "../../node_modules/bootstrap/scss/type";
+@import "../../node_modules/bootstrap/scss/images";
+@import "../../node_modules/bootstrap/scss/containers";
+@import "../../node_modules/bootstrap/scss/grid";
+@import "../../node_modules/bootstrap/scss/tables";
+@import "../../node_modules/bootstrap/scss/forms";
+@import "../../node_modules/bootstrap/scss/buttons";
+@import "../../node_modules/bootstrap/scss/transitions";
+@import "../../node_modules/bootstrap/scss/dropdown";
+@import "../../node_modules/bootstrap/scss/button-group";
+
+@import "../../node_modules/bootstrap/scss/nav";
+@import "../../node_modules/bootstrap/scss/navbar";
+// @import "../../node_modules/bootstrap/scss/card";
+// @import "../../node_modules/bootstrap/scss/accordion";
+@import "../../node_modules/bootstrap/scss/breadcrumb";
+@import "../../node_modules/bootstrap/scss/pagination";
+@import "../../node_modules/bootstrap/scss/badge";
+@import "../../node_modules/bootstrap/scss/alert";
+// @import "../../node_modules/bootstrap/scss/progress";
+@import "../../node_modules/bootstrap/scss/list-group";
+@import "../../node_modules/bootstrap/scss/close";
+// @import "../../node_modules/bootstrap/scss/toasts";
+// @import "../../node_modules/bootstrap/scss/modal";
+// @import "../../node_modules/bootstrap/scss/tooltip";
+// @import "../../node_modules/bootstrap/scss/popover";
+// @import "../../node_modules/bootstrap/scss/carousel";
+@import "../../node_modules/bootstrap/scss/spinners";
+// @import "../../node_modules/bootstrap/scss/offcanvas";
+// @import "../../node_modules/bootstrap/scss/placeholders";
+
+// Helpers
+@import "../../node_modules/bootstrap/scss/helpers";
+
+// Utilities
+@import "../../node_modules/bootstrap/scss/utilities/api";
