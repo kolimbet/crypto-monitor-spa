@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid container-lg min-vh-100 mx-auto p-3 bg-light">
+  <div class="container-fluid container-lg min-h-100vh mx-auto p-3 bg-light">
     <AddTicker />
     <hr class="w-percent-100 border-secondary" />
     <TickerList />

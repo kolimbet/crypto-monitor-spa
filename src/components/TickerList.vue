@@ -36,6 +36,17 @@
       <hr class="mt-2 w-percent-100 border-secondary" />
     </div>
 
+    <Transition name="slide-left">
+      <div v-if="$store.state.isFatalError" class="row row-cols-1 mb-0-75rem">
+        <div class="col d-flex justify-content-center">
+          <ErrorMessage
+            :message="$store.state.fatalErrorMessage"
+            :isFatal="true"
+          />
+        </div>
+      </div>
+    </Transition>
+
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
       <template v-for="index in 3" :key="index">
         <div class="col">
@@ -138,8 +149,11 @@
 </template>
 
 <script>
+import ErrorMessage from "./ErrorMessage.vue";
+
 export default {
   name: "TickerList",
+  components: { ErrorMessage },
   async created() {
     this.$store.dispatch("initApp");
   },

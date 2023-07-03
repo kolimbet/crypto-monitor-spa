@@ -7905,39 +7905,43 @@ textarea.form-control-lg {
   height: 100vh !important;
 }
 
-.min-vh-25 {
-  min-height: 25vh !important;
+.min-h-auto {
+  min-height: auto !important;
 }
 
-.min-vh-50 {
-  min-height: 50vh !important;
-}
-
-.min-vh-75 {
-  min-height: 75vh !important;
-}
-
-.min-vh-100 {
-  min-height: 100vh !important;
-}
-
-.min-vh-full {
+.min-h-full {
   min-height: 100% !important;
 }
 
-.min-vh-min {
+.min-h-min {
   min-height: -moz-min-content !important;
   min-height: min-content !important;
 }
 
-.min-vh-max {
+.min-h-max {
   min-height: -moz-max-content !important;
   min-height: max-content !important;
 }
 
-.min-vh-fit {
+.min-h-fit {
   min-height: -moz-fit-content !important;
   min-height: fit-content !important;
+}
+
+.min-h-25vh {
+  min-height: 25vh !important;
+}
+
+.min-h-50vh {
+  min-height: 50vh !important;
+}
+
+.min-h-75vh {
+  min-height: 75vh !important;
+}
+
+.min-h-100vh {
+  min-height: 100vh !important;
 }
 
 .flex-fill {

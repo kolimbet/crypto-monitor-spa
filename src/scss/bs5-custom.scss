@@ -294,16 +294,17 @@ $utilities: map-merge(
     ),
     "min-viewport-height": (
       property: min-height,
-      class: min-vh,
+      class: min-h,
       values: (
-        25: 25vh,
-        50: 50vh,
-        75: 75vh,
-        100: 100vh,
+        auto: auto,
         full: 100%,
         min: min-content,
         max: max-content,
         fit: fit-content,
+        25vh: 25vh,
+        50vh: 50vh,
+        75vh: 75vh,
+        100vh: 100vh,
       ),
     ),
     // color and transparency utilities

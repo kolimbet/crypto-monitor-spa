@@ -1,1 +1,25 @@
 @import "../../node_modules/font-awesome/css/font-awesome.min.css";
+
+/* single animations */
+.fade {
+  &-enter-active,
+  &-leave-active {
+    transition: all 0.5s linear;
+  }
+  &-enter-from,
+  &-leave-to {
+    opacity: 0;
+  }
+}
+
+.slide-left {
+  &-enter-active,
+  &-leave-active {
+    transition: all 0.5s linear;
+  }
+  &-enter-from,
+  &-leave-to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
