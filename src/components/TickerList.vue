@@ -140,5 +140,11 @@
 <script>
 export default {
   name: "TickerList",
+  async created() {
+    this.$store.dispatch("initApp");
+  },
+  beforeUnmount() {
+    this.$store.dispatch("closingApp");
+  },
 };
 </script>

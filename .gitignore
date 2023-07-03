@@ -23,4 +23,7 @@ pnpm-debug.log*
 *.sw?
 
 #Server logs
-logs/*
+/logs/*
+
+# CryptoCompare API key
+/src/transport/config/apiKey.js
