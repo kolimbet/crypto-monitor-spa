@@ -2,9 +2,10 @@ import { createStore } from "vuex";
 import { parseErrorMessage } from "@/lib/errors";
 
 import coin from "./modules/coin";
+import ticker from "./modules/ticker";
 
 export default createStore({
-  modules: { coin },
+  modules: { coin, ticker },
   state: {
     init: false,
     isFatalError: false,
@@ -30,7 +31,9 @@ export default createStore({
     initApp({ dispatch }) {
       dispatch("coin/getCoinList")
         .then(() => {
-          console.log("Список крипто-валют успешно загружен");
+          console.log(
+            "The list of cryptocurrencies has been successfully uploaded"
+          );
         })
         .catch((err) => {
           dispatch("throwFatalError", err);

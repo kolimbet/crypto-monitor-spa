@@ -8,7 +8,7 @@ function parsingResponse(answer) {
   return new Promise((resolve, reject) => {
     if (answer.Response === "Success") resolve(answer.Data);
     else if (answer.Response === "Error") reject(answer.Message);
-    else reject("Неизвестный формат ответа сервера");
+    else reject("Unknown server response format");
   });
 }
 

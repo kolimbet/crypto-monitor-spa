@@ -14,3 +14,36 @@
   transform: translateX(-100%);
   opacity: 0;
 }
+
+.folding-y-300-enter-from, .folding-y-300-leave-to {
+  max-height: 0px;
+  opacity: 0;
+  overflow: hidden;
+}
+.folding-y-300-enter-to, .folding-y-300-leave-from {
+  max-height: 300px;
+  opacity: 1;
+  overflow: auto;
+}
+.folding-y-300-enter-active, .folding-y-300-leave-active {
+  transition: all 0.5s linear;
+  overflow: hidden;
+}
+
+/* list animations */
+.list-scale01-move {
+  transition: all 1s linear;
+}
+.list-scale01-enter-from, .list-scale01-leave-to {
+  transform: scale(0.1);
+  opacity: 0;
+}
+.list-scale01-enter-to, .list-scale01-leave-from {
+  opacity: 1;
+}
+.list-scale01-enter-active {
+  transition: all 0.5s 0.5s linear;
+}
+.list-scale01-leave-active {
+  transition: all 0.5s linear;
+}

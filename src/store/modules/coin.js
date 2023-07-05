@@ -21,7 +21,7 @@ export default {
           for (let key in coinsData) coinList.push(coinsData[key]);
           // console.log(coinList.length, coinList);
           if (!coinList.length) {
-            throw new Error("Получен пустой список валют");
+            throw new Error("An empty list of currencies was received");
           }
           commit("setCoinList", coinList);
           return true;
