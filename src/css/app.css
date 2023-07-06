@@ -29,6 +29,20 @@
   transition: all 0.5s linear;
   overflow: hidden;
 }
+.folding-y-1000-enter-from, .folding-y-1000-leave-to {
+  max-height: 0px;
+  opacity: 0;
+  overflow: hidden;
+}
+.folding-y-1000-enter-to, .folding-y-1000-leave-from {
+  max-height: 1000px;
+  opacity: 1;
+  overflow: auto;
+}
+.folding-y-1000-enter-active, .folding-y-1000-leave-active {
+  transition: all 0.5s linear;
+  overflow: hidden;
+}
 
 /* list animations */
 .list-scale01-move {
@@ -46,4 +60,26 @@
 }
 .list-scale01-leave-active {
   transition: all 0.5s linear;
+}
+
+.list-folding-y-200-move {
+  transition: all 1s linear;
+}
+.list-folding-y-200-enter-from, .list-folding-y-200-leave-to {
+  max-height: 0px;
+  opacity: 0;
+  overflow: hidden;
+}
+.list-folding-y-200-enter-to, .list-folding-y-200-leave-from {
+  max-height: 200px;
+  opacity: 1;
+  overflow: auto;
+}
+.list-folding-y-200-enter-active {
+  transition: all 0.5s 0.5s linear;
+  overflow: hidden;
+}
+.list-folding-y-200-leave-active {
+  transition: all 0.5s linear;
+  overflow: hidden;
 }

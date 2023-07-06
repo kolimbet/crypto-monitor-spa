@@ -24,7 +24,7 @@
   }
 }
 
-$folding-y-heights: 300;
+$folding-y-heights: 300, 1000;
 .folding-y {
   @each $height in $folding-y-heights {
     &-#{$height} {
@@ -68,5 +68,36 @@ $folding-y-heights: 300;
   }
   &-leave-active {
     transition: all 0.5s linear;
+  }
+}
+
+$list-folding-y-heights: 200;
+.list-folding-y {
+  @each $height in $list-folding-y-heights {
+    &-#{$height} {
+      &-move {
+        transition: all 1s linear;
+      }
+      &-enter-from,
+      &-leave-to {
+        max-height: 0px;
+        opacity: 0;
+        overflow: hidden;
+      }
+      &-enter-to,
+      &-leave-from {
+        max-height: #{$height}px;
+        opacity: 1;
+        overflow: auto;
+      }
+      &-enter-active {
+        transition: all 0.5s 0.5s linear;
+        overflow: hidden;
+      }
+      &-leave-active {
+        transition: all 0.5s linear;
+        overflow: hidden;
+      }
+    }
   }
 }
