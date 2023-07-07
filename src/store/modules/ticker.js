@@ -1,3 +1,6 @@
+import { parseErrorMessage } from "@/lib/errors";
+import { restApi } from "@/transport/restApi";
+
 export default {
   namespaced: true,
   state: () => ({
@@ -22,6 +25,43 @@ export default {
     unselectTicker(state) {
       // console.log("unselectTicker");
       state.selectedTickerId = null;
+    },
+    updateTickerPrice(state, { tickerName, price }) {
+      state.tickerList
+        .filter((t) => t.name === tickerName)
+        .forEach((t) => {
+          t.rawPrice = price;
+          t.price =
+            price === null
+              ? price
+              : price > 1
+              ? price.toFixed(2)
+              : price.toPrecision(2);
+        });
+    },
+    throwTickerApiError(state, { tickerName, message, restApi = false }) {
+      state.tickerList
+        .filter((t) => t.name === tickerName)
+        .forEach((t) => {
+          if (restApi) {
+            t.isErrorApiRest = true;
+            t.errorApiRestMessage = message;
+          } else {
+            console.log(
+              "store->ticker->throwApiError failed: no API specified"
+            );
+          }
+        });
+    },
+    resetTickerApiError(state, { tickerName, restApi = false }) {
+      state.tickerList
+        .filter((t) => t.name === tickerName)
+        .forEach((t) => {
+          if (restApi) {
+            t.isErrorApiRest = false;
+            t.errorApiRestMessage = "";
+          }
+        });
     },
   },
   actions: {
@@ -64,6 +104,9 @@ export default {
 
         commit("addTickerToList", newTicker);
 
+        // request init prices data from RestAPI for new ticker
+        dispatch("requestCoinsPrices", newTicker.name);
+
         dispatch("saveTickersInStorage");
         // console.log(state.tickerList);
         resolve(true);
@@ -82,18 +125,69 @@ export default {
     saveTickersInStorage({ state }) {
       localStorage.setItem("tickers", JSON.stringify(state.tickerList));
     },
-    initTickersFromStorage({ commit }) {
+    initTickersFromStorage({ commit, dispatch }) {
       return new Promise((resolve) => {
         const tickers = localStorage.getItem("tickers")
           ? JSON.parse(localStorage.getItem("tickers"))
           : [];
+        let tickerNames = [];
 
         tickers.forEach((ticker) => {
           commit("addTickerToList", ticker);
+          commit("updateTickerPrice", {
+            tickerName: ticker.name,
+            price: null,
+          });
+          if (ticker.isErrorApiRest)
+            commit("resetTickerApiError", {
+              tickerName: ticker.name,
+              restApi: true,
+            });
+          tickerNames.push(ticker.name);
         });
+
+        dispatch("requestCoinsPrices", tickerNames);
 
         resolve(true);
       });
+    },
+    requestCoinsPrices({ state, commit }, coinList) {
+      if (!Array.isArray(coinList)) coinList = [coinList];
+      restApi
+        .getExchangeRate(coinList)
+        .then((rawPrices) => {
+          coinList.forEach((coinName) => {
+            if (
+              rawPrices[coinName] === undefined ||
+              rawPrices[coinName][state.currentCurrency] === undefined
+            )
+              commit("throwTickerApiError", {
+                tickerName: coinName,
+                message: `exchange market does not exist for ${coinName}-${state.currentCurrency}`,
+                restApi: true,
+              });
+            else
+              commit("updateTickerPrice", {
+                tickerName: coinName,
+                price: rawPrices[coinName][state.currentCurrency],
+              });
+          });
+        })
+        .catch((err) => {
+          const errorMessage = parseErrorMessage(err);
+          coinList.forEach((coinName) => {
+            let message = null;
+            if (errorMessage.includes("exchange market does not exist"))
+              message = `exchange market does not exist for ${coinName}-${state.currentCurrency}`;
+
+            // console.log(errorMessage, message);
+            commit("throwTickerApiError", {
+              tickerName: coinName,
+              message: message ?? errorMessage,
+              restApi: true,
+            });
+          });
+        });
     },
   },
 };

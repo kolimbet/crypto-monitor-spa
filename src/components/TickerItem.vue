@@ -9,24 +9,44 @@
       <div class="position-absolute top-0 end-0 start-0">
         <div class="position-relative">
           <div class="px-2 py-1 text-end">
-            <span
-              class="d-inline-block p-1 bg-secondary text-white rounded fs-xs cursor-pointer"
-              title="Connection status indicator"
-              >Status</span
-            >
             <!-- <span
               class="d-inline-block p-1 bg-success text-white rounded fs-xs cursor-pointer"
               title="You`re subscribed to this trading pair by WebSocket"
               >WS</span
             > -->
-            <!-- <span class="lh-1 fs-5 link-danger">
-              <i
-                class="fa fa-exclamation-circle cursor-pointer"
-                aria-hidden="true"
-                title="Show Errors"
-              ></i>
-            </span> -->
+            <span v-if="ticker.isErrorApiRest" class="lh-1 fs-5 link-danger">
+              <Transition name="fade" mode="out-in">
+                <i
+                  v-if="showApiError"
+                  @click.stop="toggleErrors"
+                  class="fa fa-times-circle cursor-pointer"
+                  aria-hidden="true"
+                  title="Close Errors"
+                ></i>
+                <i
+                  v-else
+                  @click.stop="toggleErrors"
+                  class="fa fa-exclamation-circle cursor-pointer"
+                  aria-hidden="true"
+                  title="Show Errors"
+                ></i>
+              </Transition>
+            </span>
           </div>
+          <template v-if="ticker.isErrorApiRest">
+            <Transition name="folding-y-300">
+              <div v-if="showApiError" class="px-1">
+                <div class="p-1 pb-0 rounded-1 bg-danger text-white">
+                  <div v-if="ticker.isErrorApiRest" class="pb-2 px-2">
+                    <div class="fs-2xs">Rest Api</div>
+                    <div class="text-center">
+                      {{ ticker.errorApiRestMessage }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+          </template>
         </div>
       </div>
 
@@ -78,6 +98,7 @@ export default {
     return {
       lastDeleteClick: null,
       maxDoubleClickInterval: 1000,
+      showApiError: false,
     };
   },
   computed: {
@@ -102,6 +123,9 @@ export default {
       } else {
         this.lastDeleteClick = clickTime;
       }
+    },
+    toggleErrors() {
+      this.showApiError = !this.showApiError;
     },
   },
 };
