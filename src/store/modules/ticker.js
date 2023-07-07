@@ -3,15 +3,29 @@ export default {
   state: () => ({
     currentCurrency: "USD",
     tickerList: [],
+    selectedTickerId: null,
   }),
   getters: {},
   mutations: {
     addTickerToList(state, newTicker) {
       state.tickerList = [...state.tickerList, newTicker];
     },
+    removeTickerFromList(state, deletedTicker) {
+      state.tickerList = state.tickerList.filter(
+        (elt) => elt.id != deletedTicker.id
+      );
+    },
+    selectTicker(state, ticker) {
+      // console.log("selectTicker " + ticker.fullName);
+      state.selectedTickerId = ticker.id;
+    },
+    unselectTicker(state) {
+      // console.log("unselectTicker");
+      state.selectedTickerId = null;
+    },
   },
   actions: {
-    addTicker({ state, commit, rootState }, tickerName) {
+    addTicker({ state, commit, dispatch, rootState }, tickerName) {
       return new Promise((resolve) => {
         tickerName = tickerName.toUpperCase();
 
@@ -50,7 +64,34 @@ export default {
 
         commit("addTickerToList", newTicker);
 
+        dispatch("saveTickersInStorage");
         // console.log(state.tickerList);
+        resolve(true);
+      });
+    },
+    deleteTicker({ state, commit, dispatch }, deletedTicker) {
+      return new Promise((resolve) => {
+        if (state.selectedTickerId === deletedTicker.id)
+          commit("unselectTicker");
+        commit("removeTickerFromList", deletedTicker);
+
+        dispatch("saveTickersInStorage");
+        resolve(true);
+      });
+    },
+    saveTickersInStorage({ state }) {
+      localStorage.setItem("tickers", JSON.stringify(state.tickerList));
+    },
+    initTickersFromStorage({ commit }) {
+      return new Promise((resolve) => {
+        const tickers = localStorage.getItem("tickers")
+          ? JSON.parse(localStorage.getItem("tickers"))
+          : [];
+
+        tickers.forEach((ticker) => {
+          commit("addTickerToList", ticker);
+        });
+
         resolve(true);
       });
     },

@@ -34,6 +34,9 @@ export default createStore({
           console.log(
             "The list of cryptocurrencies has been successfully uploaded"
           );
+          dispatch("ticker/initTickersFromStorage").then(() => {
+            console.log("The list of tickers has been restored");
+          });
         })
         .catch((err) => {
           dispatch("throwFatalError", err);

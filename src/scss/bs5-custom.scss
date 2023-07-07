@@ -17,7 +17,7 @@ $custom-theme-colors: (
   "red": $red-600,
   "red-light": $red-100,
   "red-dark": $red-700,
-  "purple-300": $purple-300,
+  "purple": $purple-600,
 );
 $theme-colors: map-merge($theme-colors, $custom-theme-colors);
 // $theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value");

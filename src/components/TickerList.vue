@@ -64,7 +64,13 @@
           tag="div"
           class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"
         >
-          <TickerItem v-for="t in paginatedTickers" :key="t.id" :ticker="t" />
+          <TickerItem
+            v-for="t in paginatedTickers"
+            :key="t.id"
+            :ticker="t"
+            @delete="deleteTicker(t)"
+            @select="selectTicker(t)"
+          />
         </TransitionGroup>
       </template>
       <template v-else>
@@ -148,6 +154,12 @@ export default {
     },
     fixPageAverage() {
       if (this.page > this.totalPages || this.page < 1) this.resetPage();
+    },
+    selectTicker(selectedTicker) {
+      this.$store.commit("ticker/selectTicker", selectedTicker);
+    },
+    deleteTicker(deletedTicker) {
+      this.$store.dispatch("ticker/deleteTicker", deletedTicker);
     },
   },
   watch: {

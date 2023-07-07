@@ -1,7 +1,9 @@
 <template>
   <div class="col">
     <div
+      @click="$emit('select')"
       class="position-relative overflow-hidden shadow rounded-3 border border-2 border-opacity-50 bg-white"
+      :class="[cardBorderColor]"
     >
       <!-- вывод ошибок API -->
       <div class="position-absolute top-0 end-0 start-0">
@@ -41,6 +43,7 @@
 
       <div class="d-grid">
         <button
+          @click="attemptDelete()"
           class="btn btn-gray-200 link-secondary mx-1 mb-1 p-3 d-flex align-items-center justify-content-center rounded-top-0"
           title="Double click to delete the ticker"
         >
@@ -71,7 +74,35 @@ export default {
     ticker: Object,
   },
   emits: ["delete", "select"],
-  computed: {},
-  methods: {},
+  data() {
+    return {
+      lastDeleteClick: null,
+      maxDoubleClickInterval: 1000,
+    };
+  },
+  computed: {
+    cardBorderColor() {
+      return (
+        "border-opacity-50 " +
+        (this.$store.state.ticker.selectedTickerId === this.ticker.id
+          ? "border-purple"
+          : "")
+      );
+    },
+  },
+  methods: {
+    attemptDelete() {
+      const clickTime = new Date();
+      if (
+        this.lastDeleteClick &&
+        clickTime - this.lastDeleteClick < this.maxDoubleClickInterval
+      ) {
+        this.lastDeleteClick = null;
+        this.$emit("delete");
+      } else {
+        this.lastDeleteClick = clickTime;
+      }
+    },
+  },
 };
 </script>
