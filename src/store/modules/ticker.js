@@ -1,5 +1,6 @@
 import { parseErrorMessage } from "@/lib/errors";
 import { restApi } from "@/transport/restApi";
+import { wsApi } from "@/transport/wsApi";
 
 export default {
   namespaced: true,
@@ -7,6 +8,8 @@ export default {
     currentCurrency: "USD",
     tickerList: [],
     selectedTickerId: null,
+
+    wsConnection: false,
   }),
   getters: {},
   mutations: {
@@ -39,13 +42,20 @@ export default {
               : price.toPrecision(2);
         });
     },
-    throwTickerApiError(state, { tickerName, message, restApi = false }) {
+    throwTickerApiError(
+      state,
+      { tickerName, message, restApi = false, wsApi = false }
+    ) {
       state.tickerList
         .filter((t) => t.name === tickerName)
         .forEach((t) => {
           if (restApi) {
             t.isErrorApiRest = true;
             t.errorApiRestMessage = message;
+          } else if (wsApi) {
+            t.wsSubscription = false;
+            t.isErrorApiWs = true;
+            t.errorApiWsMessage = message;
           } else {
             console.log(
               "store->ticker->throwApiError failed: no API specified"
@@ -53,7 +63,7 @@ export default {
           }
         });
     },
-    resetTickerApiError(state, { tickerName, restApi = false }) {
+    resetTickerApiError(state, { tickerName, restApi = false, wsApi = false }) {
       state.tickerList
         .filter((t) => t.name === tickerName)
         .forEach((t) => {
@@ -61,7 +71,34 @@ export default {
             t.isErrorApiRest = false;
             t.errorApiRestMessage = "";
           }
+          if (wsApi) {
+            t.isErrorApiWs = false;
+            t.errorApiWsMessage = "";
+          }
         });
+    },
+    confirmWsSubscription(state, tickerName) {
+      state.tickerList
+        .filter((t) => t.name === tickerName)
+        .forEach((t) => {
+          t.wsSubscription = true;
+          // If there is a WebSocket error, remove it
+          if (t.isErrorApiWs) {
+            t.isErrorApiWs = false;
+            t.errorApiWsMessage = "";
+          }
+        });
+    },
+    breakAllWsSubscription(state) {
+      state.tickerList.forEach((t) => {
+        t.wsSubscription = false;
+      });
+    },
+    confirmWsConnection(state) {
+      state.wsConnection = true;
+    },
+    breakWsConnection(state) {
+      state.wsConnection = false;
     },
   },
   actions: {
@@ -107,6 +144,9 @@ export default {
         // request init prices data from RestAPI for new ticker
         dispatch("requestCoinsPrices", newTicker.name);
 
+        // subscribe on ticker by WebSocket API
+        wsApi.subscribeToTicker(newTicker.name);
+
         dispatch("saveTickersInStorage");
         // console.log(state.tickerList);
         resolve(true);
@@ -114,6 +154,8 @@ export default {
     },
     deleteTicker({ state, commit, dispatch }, deletedTicker) {
       return new Promise((resolve) => {
+        if (deletedTicker.wsSubscription)
+          wsApi.unsubscribeFromTicker(deletedTicker.name);
         if (state.selectedTickerId === deletedTicker.id)
           commit("unselectTicker");
         commit("removeTickerFromList", deletedTicker);
@@ -138,16 +180,18 @@ export default {
             tickerName: ticker.name,
             price: null,
           });
-          if (ticker.isErrorApiRest)
+          if (ticker.isErrorApiRest || ticker.isErrorApiWs)
             commit("resetTickerApiError", {
               tickerName: ticker.name,
               restApi: true,
+              wsApi: true,
             });
           tickerNames.push(ticker.name);
         });
 
         dispatch("requestCoinsPrices", tickerNames);
 
+        wsApi.initConnection();
         resolve(true);
       });
     },

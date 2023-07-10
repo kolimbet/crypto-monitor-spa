@@ -3,6 +3,7 @@ import { parseErrorMessage } from "@/lib/errors";
 
 import coin from "./modules/coin";
 import ticker from "./modules/ticker";
+import { wsApi } from "@/transport/wsApi";
 
 export default createStore({
   modules: { coin, ticker },
@@ -19,8 +20,9 @@ export default createStore({
     },
   },
   actions: {
-    closingApp() {
+    closingApp({ rootState }) {
       // mandatory actions when closing the application
+      if (rootState.ticker.wsConnection) wsApi.closeConnection();
     },
 
     throwFatalError({ commit, dispatch }, err) {

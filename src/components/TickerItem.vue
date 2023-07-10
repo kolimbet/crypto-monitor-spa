@@ -2,19 +2,23 @@
   <div class="col">
     <div
       @click="$emit('select')"
-      class="position-relative overflow-hidden shadow rounded-3 border border-2 border-opacity-50 bg-white"
-      :class="[cardBorderColor]"
+      class="position-relative shadow rounded-3 border border-2"
+      :class="[cardBorderColor, cardBg]"
     >
       <!-- вывод ошибок API -->
       <div class="position-absolute top-0 end-0 start-0">
         <div class="position-relative">
           <div class="px-2 py-1 text-end">
-            <!-- <span
+            <span
+              v-if="ticker.wsSubscription"
               class="d-inline-block p-1 bg-success text-white rounded fs-xs cursor-pointer"
               title="You`re subscribed to this trading pair by WebSocket"
               >WS</span
-            > -->
-            <span v-if="ticker.isErrorApiRest" class="lh-1 fs-5 link-danger">
+            >
+            <span
+              v-if="ticker.isErrorApiRest || ticker.isErrorApiWs"
+              class="lh-1 fs-5 link-danger"
+            >
               <Transition name="fade" mode="out-in">
                 <i
                   v-if="showApiError"
@@ -33,10 +37,16 @@
               </Transition>
             </span>
           </div>
-          <template v-if="ticker.isErrorApiRest">
+          <template v-if="ticker.isErrorApiRest || ticker.isErrorApiWs">
             <Transition name="folding-y-300">
               <div v-if="showApiError" class="px-1">
-                <div class="p-1 pb-0 rounded-1 bg-danger text-white">
+                <div class="p-1 rounded-1 bg-danger text-white shadow">
+                  <div v-if="ticker.isErrorApiWs" class="pb-2 px-2">
+                    <div class="fs-2xs">Web Socket Api</div>
+                    <div class="text-center">
+                      {{ ticker.errorApiWsMessage }}
+                    </div>
+                  </div>
                   <div v-if="ticker.isErrorApiRest" class="pb-2 px-2">
                     <div class="fs-2xs">Rest Api</div>
                     <div class="text-center">
@@ -102,11 +112,16 @@ export default {
     };
   },
   computed: {
+    cardBg() {
+      return this.ticker.isErrorApiWs ? "bg-danger bg-opacity-25" : "bg-white";
+    },
     cardBorderColor() {
       return (
         "border-opacity-50 " +
         (this.$store.state.ticker.selectedTickerId === this.ticker.id
-          ? "border-purple"
+          ? this.ticker.isErrorApiWs
+            ? "border-danger"
+            : "border-purple"
           : "")
       );
     },

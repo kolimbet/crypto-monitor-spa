@@ -20,7 +20,7 @@
           id="addNewCoin"
           type="text"
           class="form-control mw-40"
-          placeholder="Например DOGE"
+          placeholder="For example ETH"
           autocomplete="off"
         />
         <button
