@@ -1,85 +1,156 @@
 <template>
-  <div>
-    <div role="button" class="float-end link-secondary" title="Close">
-      <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
+  <Transition name="folding-y-300" mode="out-in">
+    <div v-if="hasTickerSelected">
+      <div
+        @click="unselectTicker()"
+        role="button"
+        class="float-end link-secondary"
+        title="Close"
+      >
+        <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
+      </div>
+
+      <h4 class="mb-2 d-flex align-items-center gap-2">
+        <img v-if="imageUrl" :src="imageUrl" class="h-8 w-auto" /><span
+          >{{ selectedTicker.name }} -
+          {{ $store.state.ticker.currentCurrency }}</span
+        ><span class="link-secondary">
+          <Transition name="fade" mode="out-in">
+            <i
+              v-if="showDescription"
+              @click="toggleDisplayDescription()"
+              class="fa fa-chevron-circle-up cursor-pointer"
+              title="Close Description"
+            ></i>
+            <i
+              v-else
+              @click="toggleDisplayDescription()"
+              class="fa fa-chevron-circle-down cursor-pointer"
+              title="Open Description"
+            ></i>
+          </Transition>
+        </span>
+      </h4>
+
+      <transition name="folding-y-300">
+        <div v-if="showDescription">
+          <h5 class="text-center">{{ selectedTicker.fullName }}</h5>
+          <p>{{ selectedTicker.desc ?? "Нет описания" }}</p>
+        </div>
+      </transition>
+
+      <div
+        v-if="hasWsSubscription"
+        class="mt-4 mb-2 h-64 d-flex align-items-end border-bottom border-start border-secondary"
+      >
+        <div
+          v-for="(bar, idx) in normalizedGraph"
+          :key="idx"
+          :style="{ height: `${bar.height}%` }"
+          class="bg-primary border"
+          :class="[graphElementWidth]"
+          :title="bar.price"
+        ></div>
+      </div>
+      <div v-else class="row mt-4 mb-2">
+        <div class="col text-center fs-5">
+          Failed to subscribe to this trading pair
+        </div>
+      </div>
     </div>
-    <h4 class="mb-2 d-flex align-items-center gap-2">
-      <img
-        src="https://www.cryptocompare.com/media/37746251/btc.png"
-        class="h-8 w-auto"
-      /><span>BTC - USD</span
-      ><span class="link-secondary"
-        ><i
-          class="fa fa-chevron-circle-up cursor-pointer"
-          title="Закрыть описание"
-        ></i>
-        <i
-          class="fa fa-chevron-circle-down cursor-pointer"
-          title="Открыть описание"
-        ></i
-      ></span>
-    </h4>
-    <div>
-      <h5 class="text-center">Bitcoin</h5>
-      <p>
-        Bitcoin is a decentralized cryptocurrency that uses peer-to-peer
-        technology and a blockchain to record transactions. It was created by
-        Satoshi Nakamoto and the first block was mined on January 3, 2009.
-        Bitcoin transactions are recorded on a blockchain, which is a
-        distributed ledger that can be accessed by anyone to verify
-        transactions. Transactions are verified by miners, who are rewarded with
-        a set amount of Bitcoin and transaction fees. The supply of Bitcoin is
-        limited to 21 million coins and it is divisible to eight decimal places.
-        A wallet is needed to use Bitcoin and it consists of a public key, which
-        is used to send and receive payments, and a private key, which is used
-        to control the wallet. Bitcoin can be used for a variety of purposes,
-        including everyday transactions, as a store of value, or for investment.
-      </p>
+
+    <div v-else>
+      <div class="row">
+        <div class="col text-center">
+          <div class="mb-2 fs-5">Ticker not selected</div>
+          <div class="mb-2 fs-sm text-secondary">
+            Click on the ticker to display detailed information
+          </div>
+        </div>
+      </div>
     </div>
-    <div
-      class="mt-4 mb-2 h-64 d-flex align-items-end border-bottom border-start border-secondary"
-    >
-      <template v-for="index in 10" :key="index"
-        ><div
-          class="bg-primary border w-percent-2"
-          title="30753.78"
-          style="height: 50.8059%"
-        ></div
-      ></template>
-      <template v-for="index in 10" :key="index"
-        ><div
-          class="bg-primary border w-percent-2"
-          title="30753.78"
-          style="height: 63.5498%"
-        ></div
-      ></template>
-      <template v-for="index in 10" :key="index"
-        ><div
-          class="bg-primary border w-percent-2"
-          title="30781.65"
-          style="height: 100%"
-        ></div
-      ></template>
-      <template v-for="index in 10" :key="index"
-        ><div
-          class="bg-primary border w-percent-2"
-          title="30743.09"
-          style="height: 30.7262%"
-        ></div
-      ></template>
-      <template v-for="index in 10" :key="index"
-        ><div
-          class="bg-primary border w-percent-2"
-          title="30728.77"
-          style="height: 5%"
-        ></div
-      ></template>
-    </div>
-  </div>
+  </Transition>
 </template>
 
 <script>
+import { sourceUrls } from "@/transport/config/sourceUrls";
+
 export default {
   name: "TradingSchedule",
+  data() {
+    return {
+      showDescription: false,
+    };
+  },
+  computed: {
+    hasTickerSelected() {
+      return Boolean(this.$store.state.ticker.selectedTickerId);
+    },
+    selectedTicker() {
+      // console.log(this.$store.getters["ticker/selectedTicker"]);
+      return this.$store.getters["ticker/selectedTicker"];
+    },
+    hasWsSubscription() {
+      return this.selectedTicker?.wsSubscription ?? false;
+    },
+    imageUrl() {
+      return this.selectedTicker?.image
+        ? sourceUrls.imagesSource + this.selectedTicker.image
+        : false;
+    },
+    chart() {
+      if (this.hasTickerSelected)
+        return this.$store.getters["chart/getTickerChart"](
+          this.selectedTicker.name
+        );
+      else return [];
+    },
+    graphElementWidth() {
+      return this.$store.state.chart.chartWidthClass;
+    },
+    maxGraphValue() {
+      if (this.hasTickerSelected && this.chart.length)
+        return Math.max(...this.chart);
+      else return 1;
+    },
+    minGraphValue() {
+      if (this.hasTickerSelected && this.chart.length)
+        return Math.min(...this.chart);
+      else return 1;
+    },
+    normalizedGraph() {
+      if (
+        this.hasTickerSelected &&
+        this.hasWsSubscription &&
+        this.chart.length
+      ) {
+        if (this.maxGraphValue == this.minGraphValue)
+          return this.chart.map((price) => {
+            return {
+              price: price,
+              height: 50,
+            };
+          });
+        else
+          return this.chart.map((price) => {
+            return {
+              price: price,
+              height:
+                5 +
+                ((price - this.minGraphValue) * 95) /
+                  (this.maxGraphValue - this.minGraphValue),
+            };
+          });
+      } else return [];
+    },
+  },
+  methods: {
+    toggleDisplayDescription() {
+      this.showDescription = !this.showDescription;
+    },
+    unselectTicker() {
+      this.$store.commit("ticker/unselectTicker");
+    },
+  },
 };
 </script>

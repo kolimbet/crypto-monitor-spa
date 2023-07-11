@@ -11,7 +11,15 @@ export default {
 
     wsConnection: false,
   }),
-  getters: {},
+  getters: {
+    selectedTicker(state) {
+      if (state.selectedTickerId)
+        return state.tickerList.filter(
+          (t) => t.id === state.selectedTickerId
+        )?.[0];
+      else return false;
+    },
+  },
   mutations: {
     addTickerToList(state, newTicker) {
       state.tickerList = [...state.tickerList, newTicker];
@@ -140,6 +148,9 @@ export default {
           throw new Error("Such a ticker already exists");
 
         commit("addTickerToList", newTicker);
+        commit("chart/addTickerToChart", newTicker.name, {
+          root: true,
+        });
 
         // request init prices data from RestAPI for new ticker
         dispatch("requestCoinsPrices", newTicker.name);
@@ -159,7 +170,9 @@ export default {
         if (state.selectedTickerId === deletedTicker.id)
           commit("unselectTicker");
         commit("removeTickerFromList", deletedTicker);
-
+        commit("chart/deleteTickerFromChart", deletedTicker.name, {
+          root: true,
+        });
         dispatch("saveTickersInStorage");
         resolve(true);
       });
@@ -176,6 +189,9 @@ export default {
 
         tickers.forEach((ticker) => {
           commit("addTickerToList", ticker);
+          commit("chart/addTickerToChart", ticker.name, {
+            root: true,
+          });
           commit("updateTickerPrice", {
             tickerName: ticker.name,
             price: null,

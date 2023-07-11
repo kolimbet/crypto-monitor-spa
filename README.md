@@ -1,5 +1,9 @@
 # Crypto Monitor SPA
 
+<p align="center">
+  <img src="docs/app-home.jpg" />
+</p>
+
 This is a simple application for tracking prices for a list of selected cryptocurrencies. The list of coins is saved in localStorage and loaded at startup. The list of tickers is divided into pages of 6 pieces and can be filtered by lexical coincidence.
 
 To get the cryptocurrency exchange rate in real time, the application uses the API from cryptocompare.com. To get a list of available cryptocurrencies and initial prices for tracked tickers, the REST API is used. A WebSocket connection is used to track the prices of the user's tickers in real time.

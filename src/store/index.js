@@ -3,10 +3,11 @@ import { parseErrorMessage } from "@/lib/errors";
 
 import coin from "./modules/coin";
 import ticker from "./modules/ticker";
+import chart from "./modules/chart";
 import { wsApi } from "@/transport/wsApi";
 
 export default createStore({
-  modules: { coin, ticker },
+  modules: { coin, ticker, chart },
   state: {
     init: false,
     isFatalError: false,
@@ -20,9 +21,15 @@ export default createStore({
     },
   },
   actions: {
-    closingApp({ rootState }) {
+    closingApp({ dispatch, rootState }) {
       // mandatory actions when closing the application
       if (rootState.ticker.wsConnection) wsApi.closeConnection();
+      dispatch("chart/deletePoll", null, {
+        root: true,
+      });
+      dispatch("chart/uninstallChartResize", null, {
+        root: true,
+      });
     },
 
     throwFatalError({ commit, dispatch }, err) {
@@ -38,6 +45,12 @@ export default createStore({
           );
           dispatch("ticker/initTickersFromStorage").then(() => {
             console.log("The list of tickers has been restored");
+            dispatch("chart/initPoll", null, {
+              root: true,
+            });
+            dispatch("chart/initChartResize", null, {
+              root: true,
+            });
           });
         })
         .catch((err) => {
