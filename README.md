@@ -30,16 +30,6 @@ To work with the API CryptoCompare you need to get a personal key. Register on t
 export const apiKey = "your_personal_key";
 ```
 
-Prescribe autocorrect paths for your IDE. I use VS Code and add a local
-settings file /.vscode/settings.json the following instructions for the PathAutocomplete plugin:
-
-```
-// Path Autocomplite
-"path-autocomplete.pathMappings": {
-  "@": ["${workspace}/src"]
-}
-```
-
 I also use Live Sass Compiler. CSS files compiled by this plugin are imported into the project. The sources are in the /src/scss folder.
 
 Compile the project:
